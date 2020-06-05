@@ -14,7 +14,7 @@ class matter(object):
 
 class prompt(cmd.Cmd):
     """Global prompt. This class creates the default prompt interface. All menus should inherit this class"""
-    prompt = ": "
+    prompt = "\n: "
     
     def do_quit(self, arg):
         """Close the program"""
@@ -31,21 +31,31 @@ class prompt(cmd.Cmd):
         return cmd.Cmd.postcmd(self, stop, line)
 
     def do_create(self, arg):
+        """Create and name some matter"""
         if arg:
             print("You attempt to create",arg)
             newMatter = matter(arg)
             reality[arg] = newMatter.__dict__
+        else:
+            print("Please include a name for your creation")
 
     def do_look(self, arg):
+        """Display anything in reality that is here"""
         if not arg:
-            for thing in reality:
-                if reality[thing]["location"] == "here":
-                    print(reality[thing]["name"],"is here.")
+            if reality:
+                print("You see:")
+                for thing in reality:
+                    if reality[thing]["location"] == "here":
+                        print(reality[thing]["name"])
+                    # TODO: Will need to create a cap to how many things can display, reality will be getting to be quite a long list
+            else:
+                print("You see nothing but bleak, empty void. Someone needs to create something.")
 
     def do_destroy(self, arg):
         """Destroy anything in reality by name"""
         if arg in reality:
             reality.pop(arg)
+            print("You remove",arg,"from reality.")
 
     def do_save(self, arg):
         """Save everything in reality to a JSON file"""
@@ -60,6 +70,14 @@ class prompt(cmd.Cmd):
         json.dump(reality, json_output, indent = 6) 
         json_output.close()
         print("Reality saved to",filename)
+
+    def do_load(self, arg):
+        """Load a previously saved reality < Warning > This will overwrite the current reality"""
+        global reality
+        with open("logs/test.json") as json_file:
+            reality = json.load(json_file)
+
+
 
 if __name__ == '__main__':
     running = True
