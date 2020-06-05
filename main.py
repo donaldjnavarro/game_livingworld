@@ -15,7 +15,13 @@ class matter(object):
         return getattr(self, item)
 
     def describe(self):
+        """Display a physical description of the instance"""
         print(self.description)
+
+    def destroy(self):
+        """Delete and instance and completely remove it from the reality"""
+        print((self.name).title(),"is destroyed, completely removed from reality.")
+        reality.pop(self.name)
 
 class prompt(cmd.Cmd):
     """Global prompt. This class creates the default prompt interface. All menus should inherit this class"""
@@ -62,8 +68,7 @@ class prompt(cmd.Cmd):
     def do_destroy(self, arg):
         """Destroy anything in reality by name"""
         if arg in reality:
-            reality.pop(arg)
-            print("You remove",arg,"from reality.")
+            reality[arg].destroy()
 
     def do_save(self, arg):
         """Save everything in reality to a JSON file"""
