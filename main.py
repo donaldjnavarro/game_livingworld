@@ -8,10 +8,14 @@ class matter(object):
         self.name = name
         self.location = location
         self.type = type(self).__name__ # name of the class, for save unpacking
+        self.description = (self.name).title()+" is "+self.location+"."
 
     def __getitem__(self, item):
         """Enable bracket syntax for calling attributes of objects created with this class"""
         return getattr(self, item)
+
+    def describe(self):
+        print(self.description)
 
 class prompt(cmd.Cmd):
     """Global prompt. This class creates the default prompt interface. All menus should inherit this class"""
@@ -51,6 +55,9 @@ class prompt(cmd.Cmd):
                     # TODO: Will need to create a cap to how many things can display, reality will be getting to be quite a long list
             else:
                 print("You see nothing but bleak, empty void. Someone needs to create something.")
+        else: # if trying to look at something
+            if arg in reality:
+                reality[arg].describe()
 
     def do_destroy(self, arg):
         """Destroy anything in reality by name"""
