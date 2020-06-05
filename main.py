@@ -68,19 +68,18 @@ class prompt(cmd.Cmd):
     def do_save(self, arg):
         """Save everything in reality to a JSON file"""
         # Package reality into a dictionary for JSON storage
-        realitySeed = {}
+        realityEgg = {}
         for creation in reality:
-            realitySeed[creation] = reality[creation].__dict__
-        # Identify save location
+            realityEgg[creation] = reality[creation].__dict__
+        # Identify save location for reality
         if arg:
             filename = arg
         else:
             filename = "untitled-"+datetime.now().strftime("%Y-%m-%d-%H%M%S")
-        filename = filename+".json" # extension
-        filename = "logs/"+filename # folder
-        # Save as JSON file
+        filename = "logs/"+filename+".json"
+        # Save reality as JSON file
         json_output = open(filename, "w")
-        json.dump(realitySeed, json_output, indent = 6) 
+        json.dump(realityEgg, json_output, indent = 6) 
         json_output.close()
         print("Reality saved to",filename)
 
@@ -91,8 +90,15 @@ class prompt(cmd.Cmd):
         reality = {} # Purge reality before loading the new one
         realityEgg = {} # Purge reality before loading the new one
         filename = arg
-        with open("logs/"+arg+".json") as json_file:
-            realityEgg = json.load(json_file)
+        try:
+            filename = "logs/"+arg+".json"
+            with open(filename) as json_file:
+                realityEgg = json.load(json_file)
+        except:
+            print(filename)
+            print("No such file found, or invalid file format.")
+            print("Please specify a valid filename.")
+            print("Do not include the folder and file extension.")
         
         # Convert the realityEgg from JSON into class instances and store them in reality
         #   "name" key indicates what to name the instance within the reality object
