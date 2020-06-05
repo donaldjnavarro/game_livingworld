@@ -4,11 +4,17 @@ from datetime import datetime
 
 class matter(object):
     """Physical things are composed of matter"""
-    def __init__(self, name, location="here"):
-        self.name = name
-        self.location = location
-        self.type = type(self).__name__ # name of the class, for save unpacking
-        self.description = (self.name).title()+" is "+self.location+"."
+    def __init__(self, soul):
+        # When creating matter from a payload, use whatever key/value pairs are provided
+        if type(soul) is dict:
+            for key, value in soul.items():
+                setattr(self, key, value)
+        # When creating matter within the ui, autogenerate the instance variables
+        if type(soul) is str:
+            self.name = soul
+            self.location = "here"
+            self.type = type(self).__name__ # name of the class, for save unpacking
+            self.description = (self.name).title()+" is "+self.location+"."
 
     def __getitem__(self, item):
         """Enable bracket syntax for calling attributes of objects created with this class"""
@@ -110,7 +116,7 @@ class prompt(cmd.Cmd):
         #   "type" key indicates which class is applied
         print("Created:") if realityEgg else False
         for creation in realityEgg:
-            reality[realityEgg[creation]["name"]] = globals()[realityEgg[creation]["type"]](creation)
+            reality[realityEgg[creation]["name"]] = globals()[realityEgg[creation]["type"]](realityEgg[creation])
             print(reality[creation].name)
 
 if __name__ == '__main__':

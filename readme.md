@@ -13,11 +13,10 @@
     - Class Human (Mammal, Humanoid, Sentient)
 
 ## Questions
+- Actors and Props are indistinguishable in design, but should places be a separate class structure? How will this interact with matter instance locations?
 - Do weapons need to be distinct, or should all objects have things like weight and hardness and sharpness defined and then an attack action can use any object, or even your own body
-- Should places be classes? Should instances of matter use their self.location field to store a loction instance? or just map to a location instance?
-  - And how does this combine with "here" to map to the user's current location?
-- Actors and Props are indistinguishable in design, but should places be a separate structure?
 
-# TODO
+# Todo
 - Need unique identifiers so multiple objects can be created with the same name
-  
+- Matter should have a weight field
+- Animals have methods to interact with matter, if they have sufficient strength compared to the matter.weight  
