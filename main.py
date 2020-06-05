@@ -7,6 +7,7 @@ class matter(object):
     def __init__(self, name, location="here"):
         self.name = name
         self.location = location
+        self.type = type(self).__name__ # name of the class, for save unpacking
 
     def __getitem__(self, item):
         """Enable bracket syntax for calling attributes of objects created with this class"""
@@ -33,9 +34,9 @@ class prompt(cmd.Cmd):
     def do_create(self, arg):
         """Create and name some matter"""
         if arg:
-            print("You attempt to create",arg)
             newMatter = matter(arg)
-            reality[arg] = newMatter.__dict__
+            reality[arg] = newMatter
+            print("You create "+reality[arg].name+".")
         else:
             print("Please include a name for your creation")
 
@@ -59,6 +60,11 @@ class prompt(cmd.Cmd):
 
     def do_save(self, arg):
         """Save everything in reality to a JSON file"""
+        # Package reality into a dictionary for JSON storage
+        realitySeed = {}
+        for creation in reality:
+            realitySeed[creation] = reality[creation].__dict__
+        # Identify save location
         if arg:
             filename = arg
         else:
@@ -66,18 +72,28 @@ class prompt(cmd.Cmd):
         filename = filename+".json" # extension
         filename = "logs/"+filename # folder
         # Save as JSON file
-        json_output = open(filename, "w") 
-        json.dump(reality, json_output, indent = 6) 
+        json_output = open(filename, "w")
+        json.dump(realitySeed, json_output, indent = 6) 
         json_output.close()
         print("Reality saved to",filename)
 
     def do_load(self, arg):
         """Load a previously saved reality < Warning > This will overwrite the current reality"""
         global reality
-        with open("logs/test.json") as json_file:
-            reality = json.load(json_file)
-
-
+        global realityEgg
+        reality = {} # Purge reality before loading the new one
+        realityEgg = {} # Purge reality before loading the new one
+        filename = arg
+        with open("logs/"+arg+".json") as json_file:
+            realityEgg = json.load(json_file)
+        
+        # Convert the realityEgg from JSON into class instances and store them in reality
+        #   "name" key indicates what to name the instance within the reality object
+        #   "type" key indicates which class is applied
+        print("Created:") if realityEgg else False
+        for creation in realityEgg:
+            reality[realityEgg[creation]["name"]] = globals()[realityEgg[creation]["type"]](creation)
+            print(reality[creation].name)
 
 if __name__ == '__main__':
     running = True

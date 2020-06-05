@@ -16,6 +16,8 @@
 ## Questions
 - Do weapons need to be distinct, or should all objects have things like weight and hardness and sharpness defined and then an attack action can use any object, or even your own body
 - Do we need multiple cross sections of class definitions? Type (mammals, reptiles) vs Aspects (hands, speech)
+- By storing created instances in the reality object, are we losing all the benefits of classes?
+- Do we need to track what class each instance was created with? print("[debug]",type(newMatter).__name__)
 
 # TODO
 - Need unique identifiers so multiple objects can be created with the same name
