@@ -31,6 +31,7 @@ class matter(object):
 
 class prompt(cmd.Cmd):
     """Global prompt. This class creates the default prompt interface. All menus should inherit this class"""
+    # Methods in this class should never return True. In this root prompt that would be the equivalent of restarting the app
     prompt = "\n: "
     
     def do_quit(self, arg):
@@ -87,7 +88,7 @@ class prompt(cmd.Cmd):
             filename = arg
         else:
             filename = "untitled-"+datetime.now().strftime("%Y-%m-%d-%H%M%S")
-        filename = "logs/"+filename+".json"
+        filename = "reality/"+filename+".json"
         # Save reality as JSON file
         json_output = open(filename, "w")
         json.dump(realityEgg, json_output, indent = 6) 
@@ -101,26 +102,36 @@ class prompt(cmd.Cmd):
         reality = {} # Purge reality before loading the new one
         realityEgg = {} # Purge reality before loading the new one
         filename = arg
+        if not arg:
+            print("You need to specify a filename of which JSON file in the reality folder you want to load.")
+            return False
         try:
-            filename = "logs/"+arg+".json"
+            filename = "reality/"+arg+".json"
             with open(filename) as json_file:
                 realityEgg = json.load(json_file)
         except:
             print(filename)
             print("No such file found, or invalid file format.")
             print("Please specify a valid filename.")
-            print("Do not include the folder and file extension.")
-        
-        # Convert the realityEgg from JSON into class instances and store them in reality
+            print("Do not include the folder or file extension.")
+            return False
+        # Convert the realityEgg from JSON into class instances and store them in reality global
         #   "name" key indicates what to name the instance within the reality object
         #   "type" key indicates which class is applied
-        print("Created:") if realityEgg else False
+        print("Loading "+filename)
+        print("You begin to create...") if realityEgg else False
         for creation in realityEgg:
             reality[realityEgg[creation]["name"]] = globals()[realityEgg[creation]["type"]](realityEgg[creation])
-            print(reality[creation].name)
+            print("..."+reality[creation].name)
+
+    def do_reboot(self, arg):
+        """End the current reality and restart from scratch."""
+        print("You wipe away all of reality.")
+        return True
 
 if __name__ == '__main__':
-    running = True
-    reality = {} # An object to collect everything that is created
-    while running == True:
+    existance = True
+    while existance == True:
+        print("There is nothing but void.")
+        reality = {} # An object to collect everything that is created
         prompt().cmdloop()
