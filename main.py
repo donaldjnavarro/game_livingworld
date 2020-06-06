@@ -33,7 +33,17 @@ class prompt(cmd.Cmd):
     """Global prompt. This class creates the default prompt interface. All menus should inherit this class"""
     # Methods in this class should never return True. In this root prompt that would be the equivalent of restarting the app
     prompt = "\n: "
-    
+    def cmdloop(self, intro=None):
+        """aka the PREpreloop"""
+        global here
+        here = "void"
+        return cmd.Cmd.cmdloop(self, intro)
+
+    def preloop(self):
+        """When first arriving at this this class, or any inheriting class"""
+        global here
+        print("Location:",here)
+
     def do_quit(self, arg):
         """Close the program"""
         quit()
@@ -59,6 +69,7 @@ class prompt(cmd.Cmd):
 
     def do_look(self, arg):
         """Display anything in reality that is here"""
+        print("You are at the",here)
         if not arg:
             if reality:
                 print("You see:")
@@ -129,8 +140,33 @@ class prompt(cmd.Cmd):
         print("You wipe away all of reality.")
         return True
 
+    def do_workshop(self, arg):
+        """Go into the workshop, a dedicated space for editing instances"""
+        workshop().cmdloop()
+
+    # def do_back(self, arg):
+    """This won't work until a version is created that fires the preloop / cmdloop stuff for the landing prompt"""
+    #     print("You go back.")
+    #     return True
+
+class workshop(prompt):
+    """A place to create and edit instances"""
+
+    # def preloop(self):
+    #     print("[debug] workshop preloop")
+    
+    def cmdloop(self, intro=None):
+        """Before the inherited class's preloop"""
+        global here
+        here = "workshop"
+        return cmd.Cmd.cmdloop(self, intro)
+
+    def postcmd(self, stop, line):
+        return cmd.Cmd.postcmd(self, stop, line)
+
 if __name__ == '__main__':
     existance = True
+    here = "nowhere"
     while existance == True:
         print("There is nothing but void.")
         reality = {} # An object to collect everything that is created
